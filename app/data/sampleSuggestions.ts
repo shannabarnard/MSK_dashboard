@@ -1,4 +1,4 @@
-import type { SuggestionsData } from "../types/suggestions";
+import type { SuggestionsData } from "../types/suggestion";
 
 export const sampleData: SuggestionsData = {
   employees: [
