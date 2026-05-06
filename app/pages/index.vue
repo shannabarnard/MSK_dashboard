@@ -1,5 +1,11 @@
 <script setup lang="ts">
-  import { sampleEmployees } from "~/data/sampleSuggestions";
+  import { useQuery } from "@tanstack/vue-query";
+  import { fetchSuggestions } from "~/services/suggestionsApi";
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["suggestions"],
+    queryFn: fetchSuggestions
+  });
 </script>
 
 <template>
@@ -11,9 +17,15 @@
 
     <section>
       <h2 class="mb-2 text-lg font-medium text-slate-800">Employees</h2>
+      <p v-if="isLoading" class="text-sm text-slate-600">
+        Loading employees...
+      </p>
+      <p v-else-if="isError" class="text-sm text-rose-600">
+        {{ (error as Error)?.message ?? "Unable to load employees." }}
+      </p>
       <ul class="list-inside list-disc space-y-1 text-slate-700">
         <li
-          v-for="employee in sampleEmployees" 
+          v-for="employee in data?.employees ?? []"
           :key="employee.id"
         >
           {{ employee.name }}
