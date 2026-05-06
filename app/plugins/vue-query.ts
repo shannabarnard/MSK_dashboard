@@ -6,12 +6,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       queries: {
         staleTime: 30_000,
         retry: 1,
-        refetchOnWindowFocus: false
-      }
-    }
+        refetchOnWindowFocus: false,
+      },
+    },
   });
 
   nuxtApp.vueApp.use(VueQueryPlugin, {
-    queryClient
+    queryClient,
   });
 });
