@@ -6,7 +6,6 @@ import {
   type StatusFilter,
 } from "~/utils/suggestionTableFilters";
 
-/** Facet filters only (priority, status, type). Search stays in the parent (e.g. debounce + header binding). */
 export function useSuggestionsTableFilters(
   items: MaybeRefOrGetter<Suggestion[]>,
 ) {

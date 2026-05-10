@@ -23,7 +23,10 @@ More detail on product and engineering choices lives in [`docs/assumptions.md`](
 npx playwright install chromium
 ```
 
-**Unit tests (Vitest)** — transition rules in `app/utils/domain/suggestionStatus.ts`:
+**Unit tests (Vitest)** — pure functions under `tests/unit/`:
+
+- **`suggestionStatus`** — allowed status transitions (`app/utils/domain/suggestionStatus.ts`).
+- **`suggestionTableFilters`** — facet filters (priority, status, suggestion type), text search on employee name + description, and the composed facets-then-search pipeline (`app/utils/suggestionTableFilters.ts`).
 
 ```bash
 npm run test:unit
@@ -83,6 +86,7 @@ npm test
 - **Server store**: `server/utils/suggestionsStore.ts` — `structuredClone` of sample data, `listSuggestions` + `setSuggestionStatus` as the only list read/update path for this demo.
 - **Single transition module**: `app/utils/domain/suggestionStatus.ts` — `canTransitionStatus` on the server, `getNextStatuses` for `StatusSelect`, so the UI cannot offer illegal transitions.
 - **Client mutation flow**: `useSuggestionStatusUpdate` uses a shared `SUGGESTIONS_QUERY_KEY`, optimistic cache updates, and rollback on error; server response reconciles the updated row.
+- **Table filtering (facet + search)**: priority, status, and type tags are **facet** filters via `useSuggestionsTableFilters` and `filterSuggestionsByFacets`. The search box uses **`useDebouncedString`** from `SuggestionTable.vue` (immediate input vs debounced query), then **`filterSuggestionsBySearchQuery`** on top of facet results; **`filterSuggestionsByTableState`** composes the same order (facets, then search) for tests and reuse.
 - **Type filter semantics**: no types selected = show all types; partial selection = filter to those types only.
 
 ---

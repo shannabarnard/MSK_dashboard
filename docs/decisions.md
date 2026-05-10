@@ -106,7 +106,7 @@
 
 **Decision**
 
-- **Vitest** for a small **unit** suite (`tests/unit/`) targeting pure domain logic (e.g. `suggestionStatus` transitions), with `~` aliased to `app/` in `vitest.config.ts`.
+- **Vitest** for a small **unit** suite (`tests/unit/`) targeting pure logic: `suggestionStatus` transitions and `suggestionTableFilters` (facets, search, composed pipeline), with `~` aliased to `app/` in `vitest.config.ts`.
 - **Playwright** for a minimal **E2E** smoke spec (`e2e/`) against the home page; default flow is `build` + `nuxt preview` on **port 4173** so local `npm run dev` on 3000 can stay running.
 
 **Why**
@@ -116,3 +116,22 @@
 **Tradeoff**
 
 - E2E cold run includes a production build; expand specs gradually to justify CI time.
+
+---
+
+## 8) Facet filters vs debounced search (split responsibilities)
+
+**Decision**
+
+- **Facets** (priority, status, suggestion type): state and derived list live in `useSuggestionsTableFilters`, implemented with `filterSuggestionsByFacets` in `app/utils/suggestionTableFilters.ts`.
+- **Search** (employee name + suggestion text): debounce and immediate vs effective string state live in `useDebouncedString` (used from `SuggestionTable.vue`); the effective query is applied via `filterSuggestionsBySearchQuery` on the facet-filtered list.
+- **`filterSuggestionsByTableState`** applies facets then search in one call so behavior matches the UI and stays easy to test.
+
+**Why**
+
+- Keeps the composable free of employee maps and timers; pure filter functions stay testable without Vue or fake timers.
+
+**Tradeoff**
+
+- Readers look in two places for “how the table filters”; the pipeline is documented in README and encoded in `filterSuggestionsByTableState`.
+- **`useDebouncedString` is a small in-house helper** instead of pulling in **VueUse** (`watchDebounced`, `useDebounceFn`, etc.): fewer dependencies and explicit behavior (e.g. flush when the query is whitespace-only). If the app grows more debounced or async UI patterns, **consider adopting VueUse** (or similar) for consistency and shared maintenance rather than accumulating one-off timers.

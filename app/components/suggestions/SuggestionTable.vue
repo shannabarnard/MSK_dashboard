@@ -6,6 +6,7 @@ import type {
   SuggestionStatus,
   SuggestionType,
 } from "../../types/suggestion";
+import { useDebouncedString } from "~/composables/useDebouncedString";
 import { useSuggestionsTableFilters } from "~/composables/useSuggestionsTableFilters";
 import { filterSuggestionsBySearchQuery } from "~/utils/suggestionTableFilters";
 import StatusChip from "~/components/suggestions/StatusChip.vue";
@@ -34,41 +35,17 @@ const {
 } = useSuggestionsTableFilters(() => props.items);
 
 const SEARCH_DEBOUNCE_MS = 300;
-const searchInput = ref("");
-const debouncedSearchQuery = ref("");
-let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-const setSearchQuery = (value: string) => {
-  searchInput.value = value;
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = null;
-  }
-  if (value.trim() === "") {
-    debouncedSearchQuery.value = "";
-    return;
-  }
-  searchDebounceTimer = setTimeout(() => {
-    debouncedSearchQuery.value = value;
-    searchDebounceTimer = null;
-  }, SEARCH_DEBOUNCE_MS);
-};
+const {
+  immediate: searchInput,
+  debounced: debouncedSearchQuery,
+  setValue: setSearchQuery,
+  reset: resetSearch,
+} = useDebouncedString(SEARCH_DEBOUNCE_MS);
 
 const clearFilters = () => {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = null;
-  }
-  searchInput.value = "";
-  debouncedSearchQuery.value = "";
+  resetSearch();
   clearFacetFilters();
 };
-
-onBeforeUnmount(() => {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer);
-  }
-});
 
 const filteredItems = computed(() =>
   filterSuggestionsBySearchQuery(

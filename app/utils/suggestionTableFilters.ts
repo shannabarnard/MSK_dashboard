@@ -55,7 +55,11 @@ export function filterSuggestionsBySearchQuery(
   });
 }
 
-export type SuggestionTableFilterState = SuggestionFacetFilterState & {  /** Effective search string (e.g. after debounce); matched case-insensitively. */
+/**
+ * Facet state plus the effective search string (e.g. after debounce in the UI).
+ * Search matching is case-insensitive; see `filterSuggestionsBySearchQuery`.
+ */
+export type SuggestionTableFilterState = SuggestionFacetFilterState & {
   searchQuery: string;
 };
 
