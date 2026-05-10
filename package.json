@@ -10,7 +10,12 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --ignore-unknown --write .",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test": "npm run test:unit && npm run test:e2e"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
@@ -21,9 +26,11 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
+    "@playwright/test": "^1.59.1",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.3"
+    "prettier": "^3.8.3",
+    "vitest": "^3.2.4"
   }
 }

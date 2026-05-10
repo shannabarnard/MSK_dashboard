@@ -9,6 +9,8 @@ const globalIgnores = [
   "node_modules/*",
   ".nuxt/*",
   ".output/*",
+  "playwright-report/*",
+  "test-results/*",
 ];
 
 export default withNuxt([
