@@ -73,6 +73,12 @@ const filteredItems = computed(() => {
     return matchesEmployee || matchesSuggestion;
   });
 });
+
+const typeLabel = (type: SuggestionType) => type.replaceAll("_", " ");
+
+const departmentLabel = (value: string | null | undefined) => {
+  return value?.trim() || "—";
+};
 </script>
 
 <template>
@@ -102,11 +108,6 @@ const filteredItems = computed(() => {
             <th
               class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500"
             >
-              Type
-            </th>
-            <th
-              class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500"
-            >
               Suggestion
             </th>
             <th
@@ -132,16 +133,25 @@ const filteredItems = computed(() => {
             :key="item.id"
             class="border-t border-slate-100"
           >
-            <td class="px-4 py-3 text-sm text-slate-800">
-              {{ employeesById[item.employeeId]?.name ?? "Unknown" }}
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-700 capitalize">
-              {{ item.type }}
-            </td>
-            <td class="px-4 py-3 text-sm text-slate-700">
-              {{ item.description }}
+            <td class="px-4 py-3 align-top">
+              <p class="text-sm font-semibold text-slate-900">
+                {{ employeesById[item.employeeId]?.name ?? "Unknown" }}
+              </p>
+              <p class="mt-1 text-xs text-slate-500">
+                {{
+                  departmentLabel(employeesById[item.employeeId]?.department)
+                }}
+              </p>
             </td>
             <td class="px-4 py-3 align-top">
+              <p class="text-sm font-semibold capitalize text-slate-900">
+                {{ typeLabel(item.type) }}
+              </p>
+              <p class="mt-1 text-xs leading-snug text-slate-600">
+                {{ item.description }}
+              </p>
+            </td>
+            <td class="px-4 py-3">
               <RiskBadge :priority="item.priority" />
             </td>
             <td class="px-4 py-3">
@@ -160,7 +170,7 @@ const filteredItems = computed(() => {
             class="border-t border-slate-100"
           >
             <td
-              colspan="6"
+              colspan="5"
               class="px-4 py-8 text-center text-sm text-slate-500"
             >
               No results match your filters or search
