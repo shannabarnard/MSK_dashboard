@@ -3,7 +3,12 @@ import SuggestionTableHeader, {
   type PriorityFilter,
   type StatusFilter,
 } from "./SuggestionTableHeader.vue";
-import type { Employee, Suggestion } from "../../types/suggestion";
+import type {
+  Employee,
+  Suggestion,
+  SuggestionType,
+} from "../../types/suggestion";
+import { isPartialTypeSelection } from "~/utils/suggestionTypeFilter";
 import StatusChip from "~/components/suggestions/StatusChip.vue";
 import RiskBadge from "~/components/suggestions/RiskBadge.vue";
 
@@ -15,6 +20,7 @@ const props = defineProps<{
 const searchQuery = ref("");
 const priorityFilter = ref<PriorityFilter>("All");
 const statusFilter = ref<StatusFilter>("All");
+const selectedTypes = ref<SuggestionType[]>([]);
 
 const setSearchQuery = (value: string) => {
   searchQuery.value = value;
@@ -28,10 +34,15 @@ const setStatusFilter = (value: StatusFilter) => {
   statusFilter.value = value;
 };
 
+const setSelectedTypes = (value: SuggestionType[]) => {
+  selectedTypes.value = value;
+};
+
 const clearFilters = () => {
   searchQuery.value = "";
   priorityFilter.value = "All";
   statusFilter.value = "All";
+  selectedTypes.value = [];
 };
 
 const filteredItems = computed(() => {
@@ -44,11 +55,19 @@ const filteredItems = computed(() => {
     list = list.filter((item) => item.status === statusFilter.value);
   }
 
+  if (isPartialTypeSelection(selectedTypes.value)) {
+    list = list.filter((item) => selectedTypes.value.includes(item.type));
+  }
+
   const query = searchQuery.value.trim().toLowerCase();
-  if (!query) return list;
+  if (!query) {
+    return list;
+  }
 
   return list.filter((item) => {
-    const name = (props.employeesById[item.employeeId]?.name ?? "").toLowerCase();
+    const name = (
+      props.employeesById[item.employeeId]?.name ?? ""
+    ).toLowerCase();
     const matchesEmployee = name.includes(query);
     const matchesSuggestion = item.description.toLowerCase().includes(query);
     return matchesEmployee || matchesSuggestion;
@@ -62,11 +81,13 @@ const filteredItems = computed(() => {
   >
     <SuggestionTableHeader
       :query="searchQuery"
-      :priority-filter="priorityFilter"
-      :status-filter="statusFilter"
+      :priority-filter
+      :status-filter
+      :selected-types
       @update:query="setSearchQuery"
       @update:priority-filter="setPriorityFilter"
       @update:status-filter="setStatusFilter"
+      @update:selected-types="setSelectedTypes"
       @clear="clearFilters"
     />
     <div class="overflow-x-auto">
@@ -134,8 +155,14 @@ const filteredItems = computed(() => {
               </button>
             </td>
           </tr>
-          <tr v-if="filteredItems.length === 0" class="border-t border-slate-100">
-            <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
+          <tr
+            v-if="filteredItems.length === 0"
+            class="border-t border-slate-100"
+          >
+            <td
+              colspan="6"
+              class="px-4 py-8 text-center text-sm text-slate-500"
+            >
               No results match your filters or search
             </td>
           </tr>

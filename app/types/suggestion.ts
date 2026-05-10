@@ -3,12 +3,15 @@ export type SuggestionStatus =
   | "in_progress"
   | "completed"
   | "overdue";
+
 export type SuggestionPriority = "high" | "medium" | "low";
+
 export type SuggestionType =
   | "equipment"
   | "exercise"
   | "behavioural"
   | "lifestyle";
+
 export type SuggestionSource = "vida" | "admin";
 
 export type Employee = {

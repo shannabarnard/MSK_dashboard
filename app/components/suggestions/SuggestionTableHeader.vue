@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { SuggestionPriority, SuggestionStatus } from "~/types/suggestion";
+import type {
+  SuggestionPriority,
+  SuggestionStatus,
+  SuggestionType,
+} from "~/types/suggestion";
+import SuggestionTypeTagGroup from "~/components/suggestions/SuggestionTypeTagGroup.vue";
+import { isPartialTypeSelection } from "~/utils/suggestionTypeFilter";
 
 export type PriorityFilter = SuggestionPriority | "All";
 export type StatusFilter = SuggestionStatus | "All";
@@ -8,12 +14,14 @@ const props = defineProps<{
   query: string;
   priorityFilter: PriorityFilter;
   statusFilter: StatusFilter;
+  selectedTypes: SuggestionType[];
 }>();
 
 const emit = defineEmits<{
   "update:query": [value: string];
   "update:priorityFilter": [value: PriorityFilter];
   "update:statusFilter": [value: StatusFilter];
+  "update:selectedTypes": [value: SuggestionType[]];
   clear: [];
 }>();
 
@@ -21,7 +29,8 @@ const hasActiveFilters = computed(
   () =>
     props.query.trim() !== "" ||
     props.priorityFilter !== "All" ||
-    props.statusFilter !== "All",
+    props.statusFilter !== "All" ||
+    isPartialTypeSelection(props.selectedTypes),
 );
 
 const onQueryInput = (event: Event) => {
@@ -29,11 +38,21 @@ const onQueryInput = (event: Event) => {
 };
 
 const onPriorityChange = (event: Event) => {
-  emit("update:priorityFilter", (event.target as HTMLSelectElement).value as PriorityFilter);
+  emit(
+    "update:priorityFilter",
+    (event.target as HTMLSelectElement).value as PriorityFilter,
+  );
 };
 
 const onStatusChange = (event: Event) => {
-  emit("update:statusFilter", (event.target as HTMLSelectElement).value as StatusFilter);
+  emit(
+    "update:statusFilter",
+    (event.target as HTMLSelectElement).value as StatusFilter,
+  );
+};
+
+const setSelectedTypes = (value: SuggestionType[]) => {
+  emit("update:selectedTypes", value);
 };
 
 const onClear = () => {
@@ -55,6 +74,11 @@ const onClear = () => {
         @input="onQueryInput"
       />
     </div>
+
+    <SuggestionTypeTagGroup
+      :model-value="props.selectedTypes"
+      @update:model-value="setSelectedTypes"
+    />
 
     <div class="flex flex-col gap-1">
       <select
