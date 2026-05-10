@@ -24,13 +24,30 @@ const emit = defineEmits<{
   "update-status": [id: string, nextStatus: SuggestionStatus];
 }>();
 
-const searchQuery = ref("");
+const searchInput = ref("");
+const debouncedSearchQuery = ref("");
+const SEARCH_DEBOUNCE_MS = 300;
+
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
 const priorityFilter = ref<PriorityFilter>("All");
 const statusFilter = ref<StatusFilter>("All");
 const selectedTypes = ref<SuggestionType[]>([]);
 
 const setSearchQuery = (value: string) => {
-  searchQuery.value = value;
+  searchInput.value = value;
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = null;
+  }
+  if (value.trim() === "") {
+    debouncedSearchQuery.value = "";
+    return;
+  }
+  searchDebounceTimer = setTimeout(() => {
+    debouncedSearchQuery.value = value;
+    searchDebounceTimer = null;
+  }, SEARCH_DEBOUNCE_MS);
 };
 
 const setPriorityFilter = (value: PriorityFilter) => {
@@ -46,11 +63,22 @@ const setSelectedTypes = (value: SuggestionType[]) => {
 };
 
 const clearFilters = () => {
-  searchQuery.value = "";
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = null;
+  }
+  searchInput.value = "";
+  debouncedSearchQuery.value = "";
   priorityFilter.value = "All";
   statusFilter.value = "All";
   selectedTypes.value = [];
 };
+
+onBeforeUnmount(() => {
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer);
+  }
+});
 
 const filteredItems = computed(() => {
   let list = props.items;
@@ -66,7 +94,7 @@ const filteredItems = computed(() => {
     list = list.filter((item) => selectedTypes.value.includes(item.type));
   }
 
-  const query = searchQuery.value.trim().toLowerCase();
+  const query = debouncedSearchQuery.value.trim().toLowerCase();
   if (!query) {
     return list;
   }
@@ -95,7 +123,7 @@ const isStatusCompleted = (status: SuggestionStatus) => status === "completed";
     class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
   >
     <SuggestionTableHeader
-      :query="searchQuery"
+      :query="searchInput"
       :priority-filter
       :status-filter
       :selected-types
