@@ -99,3 +99,20 @@
 **Tradeoff**
 
 - Slightly different from “checkboxes = AND of checked only” in some apps; documented here for clarity.
+
+---
+
+## 7) Demo test stack: Vitest + Playwright
+
+**Decision**
+
+- **Vitest** for a small **unit** suite (`tests/unit/`) targeting pure domain logic (e.g. `suggestionStatus` transitions), with `~` aliased to `app/` in `vitest.config.ts`.
+- **Playwright** for a minimal **E2E** smoke spec (`e2e/`) against the home page; default flow is `build` + `nuxt preview` on **port 4173** so local `npm run dev` on 3000 can stay running.
+
+**Why**
+
+- Shows how to run fast, isolated tests and one browser-level check without a heavy component harness.
+
+**Tradeoff**
+
+- E2E cold run includes a production build; expand specs gradually to justify CI time.

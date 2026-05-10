@@ -15,6 +15,54 @@ More detail on product and engineering choices lives in [`docs/assumptions.md`](
 
 ---
 
+## Testing
+
+**One-time setup (browsers for E2E):**
+
+```bash
+npx playwright install chromium
+```
+
+**Unit tests (Vitest)** — transition rules in `app/utils/domain/suggestionStatus.ts`:
+
+```bash
+npm run test:unit
+```
+
+Watch mode while developing:
+
+```bash
+npm run test:unit:watch
+```
+
+**End-to-end (Playwright)** — smoke test on `/` (headings for the board and table). By default Playwright runs `npm run build` and `nuxt preview` on **port 4173** so it does not collide with `npm run dev` on port 3000.
+
+```bash
+npm run test:e2e
+```
+
+CI-style run (no reuse of an existing server):
+
+```bash
+CI=1 npm run test:e2e
+```
+
+**All tests:**
+
+```bash
+npm test
+```
+
+| Script | Purpose |
+|--------|---------|
+| `test:unit` | Run Vitest once |
+| `test:unit:watch` | Vitest watch mode |
+| `test:e2e` | Playwright (Chromium) |
+| `test:e2e:ui` | Playwright with UI mode |
+| `test` | Unit then E2E |
+
+---
+
 ## Assumptions
 
 - Primary user is an HR / H&S (or similar) admin doing recurring triage on MSK suggestions.
@@ -59,4 +107,5 @@ More detail on product and engineering choices lives in [`docs/assumptions.md`](
 - **Deduplicate status lists**: derive allowed statuses for the PATCH handler from a single shared constant with the TypeScript type to avoid drift.
 - **Shared “apply status patch” helper**: one small function used by `setSuggestionStatus` and the optimistic mutation to reduce duplication.
 - **Error UX**: row-level error messages, retry, and handling for concurrent edits.
+- **Testing**: broaden coverage (more API/store cases, filter and completed-row UI, accessibility).
 - **Observability**: structured logging and metrics on PATCH latency and validation failures.
