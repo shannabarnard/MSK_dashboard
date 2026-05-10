@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import SuggestionTableHeader, {
-  type PriorityFilter,
-  type StatusFilter,
-} from "./SuggestionTableHeader.vue";
+import SuggestionTableHeader from "./SuggestionTableHeader.vue";
 import type {
   Employee,
   Suggestion,
   SuggestionStatus,
   SuggestionType,
 } from "../../types/suggestion";
-import { isPartialTypeSelection } from "~/utils/suggestionTypeFilter";
+import { useSuggestionsTableFilters } from "~/composables/useSuggestionsTableFilters";
+import { filterSuggestionsBySearchQuery } from "~/utils/suggestionTableFilters";
 import StatusChip from "~/components/suggestions/StatusChip.vue";
 import StatusSelect from "~/components/suggestions/StatusSelect.vue";
 import RiskBadge from "~/components/suggestions/RiskBadge.vue";
@@ -24,15 +22,21 @@ const emit = defineEmits<{
   "update-status": [id: string, nextStatus: SuggestionStatus];
 }>();
 
+const {
+  priorityFilter,
+  statusFilter,
+  selectedTypes,
+  setPriorityFilter,
+  setStatusFilter,
+  setSelectedTypes,
+  clearFacetFilters,
+  facetFilteredItems,
+} = useSuggestionsTableFilters(() => props.items);
+
+const SEARCH_DEBOUNCE_MS = 300;
 const searchInput = ref("");
 const debouncedSearchQuery = ref("");
-const SEARCH_DEBOUNCE_MS = 300;
-
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-const priorityFilter = ref<PriorityFilter>("All");
-const statusFilter = ref<StatusFilter>("All");
-const selectedTypes = ref<SuggestionType[]>([]);
 
 const setSearchQuery = (value: string) => {
   searchInput.value = value;
@@ -50,18 +54,6 @@ const setSearchQuery = (value: string) => {
   }, SEARCH_DEBOUNCE_MS);
 };
 
-const setPriorityFilter = (value: PriorityFilter) => {
-  priorityFilter.value = value;
-};
-
-const setStatusFilter = (value: StatusFilter) => {
-  statusFilter.value = value;
-};
-
-const setSelectedTypes = (value: SuggestionType[]) => {
-  selectedTypes.value = value;
-};
-
 const clearFilters = () => {
   if (searchDebounceTimer) {
     clearTimeout(searchDebounceTimer);
@@ -69,9 +61,7 @@ const clearFilters = () => {
   }
   searchInput.value = "";
   debouncedSearchQuery.value = "";
-  priorityFilter.value = "All";
-  statusFilter.value = "All";
-  selectedTypes.value = [];
+  clearFacetFilters();
 };
 
 onBeforeUnmount(() => {
@@ -80,34 +70,13 @@ onBeforeUnmount(() => {
   }
 });
 
-const filteredItems = computed(() => {
-  let list = props.items;
-
-  if (priorityFilter.value !== "All") {
-    list = list.filter((item) => item.priority === priorityFilter.value);
-  }
-  if (statusFilter.value !== "All") {
-    list = list.filter((item) => item.status === statusFilter.value);
-  }
-
-  if (isPartialTypeSelection(selectedTypes.value)) {
-    list = list.filter((item) => selectedTypes.value.includes(item.type));
-  }
-
-  const query = debouncedSearchQuery.value.trim().toLowerCase();
-  if (!query) {
-    return list;
-  }
-
-  return list.filter((item) => {
-    const name = (
-      props.employeesById[item.employeeId]?.name ?? ""
-    ).toLowerCase();
-    const matchesEmployee = name.includes(query);
-    const matchesSuggestion = item.description.toLowerCase().includes(query);
-    return matchesEmployee || matchesSuggestion;
-  });
-});
+const filteredItems = computed(() =>
+  filterSuggestionsBySearchQuery(
+    facetFilteredItems.value,
+    props.employeesById,
+    debouncedSearchQuery.value,
+  ),
+);
 
 const typeLabel = (type: SuggestionType) => type.replaceAll("_", " ");
 

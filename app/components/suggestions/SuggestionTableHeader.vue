@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import type {
-  SuggestionPriority,
-  SuggestionStatus,
-  SuggestionType,
-} from "~/types/suggestion";
+import type { SuggestionType } from "~/types/suggestion";
 import SuggestionTypeTagGroup from "~/components/suggestions/SuggestionTypeTagGroup.vue";
 import { isPartialTypeSelection } from "~/utils/suggestionTypeFilter";
-
-export type PriorityFilter = SuggestionPriority | "All";
-export type StatusFilter = SuggestionStatus | "All";
+import type {
+  PriorityFilter,
+  StatusFilter,
+} from "~/utils/suggestionTableFilters";
 
 const props = defineProps<{
   query: string;
