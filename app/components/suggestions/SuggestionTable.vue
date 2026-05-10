@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SuggestionTableHeader, { type SuggestionSearchColumn } from "./SuggestionTableHeader.vue";
+import SuggestionTableHeader from "./SuggestionTableHeader.vue";
 import type { Employee, Suggestion } from "../../types/suggestion";
 
 const props = defineProps<{
@@ -7,15 +7,10 @@ const props = defineProps<{
   employeesById: Record<string, Employee>;
 }>();
 
-const searchColumn = ref<SuggestionSearchColumn>("employee");
 const searchQuery = ref("");
 
 const setSearchQuery = (value: string) => {
   searchQuery.value = value;
-};
-
-const setSearchColumn = (value: SuggestionSearchColumn) => {
-  searchColumn.value = value;
 };
 
 const filteredItems = computed(() => {
@@ -23,11 +18,10 @@ const filteredItems = computed(() => {
   if (!query) return props.items;
 
   return props.items.filter((item) => {
-    if (searchColumn.value === "employee") {
-      return (props.employeesById[item.employeeId]?.name ?? "").toLowerCase().includes(query);
-    }
-
-    return item.description.toLowerCase().includes(query);
+    const name = (props.employeesById[item.employeeId]?.name ?? "").toLowerCase();
+    const matchesEmployee = name.includes(query);
+    const matchesSuggestion = item.description.toLowerCase().includes(query);
+    return matchesEmployee || matchesSuggestion;
   });
 });
 </script>
@@ -36,12 +30,7 @@ const filteredItems = computed(() => {
   <section
     class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
   >
-    <SuggestionTableHeader
-      :query="searchQuery"
-      :column="searchColumn"
-      @update:query="setSearchQuery"
-      @update:column="setSearchColumn"
-    />
+    <SuggestionTableHeader :query="searchQuery" @update:query="setSearchQuery" />
     <div class="overflow-x-auto">
       <table class="min-w-full border-collapse">
         <thead class="bg-slate-50 text-left">
