@@ -1,16 +1,47 @@
 <script setup lang="ts">
+import SuggestionTableHeader, { type SuggestionSearchColumn } from "./SuggestionTableHeader.vue";
 import type { Employee, Suggestion } from "../../types/suggestion";
 
-defineProps<{
+const props = defineProps<{
   items: Suggestion[];
   employeesById: Record<string, Employee>;
 }>();
+
+const searchColumn = ref<SuggestionSearchColumn>("employee");
+const searchQuery = ref("");
+
+const setSearchQuery = (value: string) => {
+  searchQuery.value = value;
+};
+
+const setSearchColumn = (value: SuggestionSearchColumn) => {
+  searchColumn.value = value;
+};
+
+const filteredItems = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) return props.items;
+
+  return props.items.filter((item) => {
+    if (searchColumn.value === "employee") {
+      return (props.employeesById[item.employeeId]?.name ?? "").toLowerCase().includes(query);
+    }
+
+    return item.description.toLowerCase().includes(query);
+  });
+});
 </script>
 
 <template>
   <section
     class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
   >
+    <SuggestionTableHeader
+      :query="searchQuery"
+      :column="searchColumn"
+      @update:query="setSearchQuery"
+      @update:column="setSearchColumn"
+    />
     <div class="overflow-x-auto">
       <table class="min-w-full border-collapse">
         <thead class="bg-slate-50 text-left">
@@ -49,7 +80,7 @@ defineProps<{
         </thead>
         <tbody>
           <tr
-            v-for="item in items"
+            v-for="item in filteredItems"
             :key="item.id"
             class="border-t border-slate-100"
           >
@@ -72,6 +103,11 @@ defineProps<{
               >
                 Update
               </button>
+            </td>
+          </tr>
+          <tr v-if="filteredItems.length === 0" class="border-t border-slate-100">
+            <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
+              No results match your search
             </td>
           </tr>
         </tbody>
