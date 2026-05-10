@@ -29,6 +29,8 @@ export type Suggestion = {
   priority: SuggestionPriority;
   source: SuggestionSource;
   status: SuggestionStatus;
+  /** Who last changed the workflow status (VIDA vs dashboard admin). */
+  statusUpdatedBy?: "vida" | "admin";
   dateCreated: string; // ISO string
   dateUpdated: string; // ISO string
   dateCompleted?: string;
