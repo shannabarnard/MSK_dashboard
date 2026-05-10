@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SuggestionTableHeader from "./SuggestionTableHeader.vue";
 import type { Employee, Suggestion } from "../../types/suggestion";
+import StatusChip from "~/components/suggestions/StatusChip.vue";
 
 const props = defineProps<{
   items: Suggestion[];
@@ -85,7 +86,9 @@ const filteredItems = computed(() => {
             <td class="px-4 py-3 text-sm text-slate-700 capitalize">
               {{ item.priority }}
             </td>
-            <td class="px-4 py-3 text-sm text-slate-700">{{ item.status }}</td>
+            <td class="px-4 py-3">
+              <StatusChip :status="item.status" />
+            </td>
             <td class="px-4 py-3 text-sm text-slate-700">
               <button
                 class="rounded border border-slate-300 px-2 py-1 text-xs font-medium hover:bg-slate-50"
