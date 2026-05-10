@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import SuggestionTableHeader from "./SuggestionTableHeader.vue";
+import SuggestionTableHeader, {
+  type PriorityFilter,
+  type StatusFilter,
+} from "./SuggestionTableHeader.vue";
 import type { Employee, Suggestion } from "../../types/suggestion";
 import StatusChip from "~/components/suggestions/StatusChip.vue";
 import RiskBadge from "~/components/suggestions/RiskBadge.vue";
@@ -10,16 +13,41 @@ const props = defineProps<{
 }>();
 
 const searchQuery = ref("");
+const priorityFilter = ref<PriorityFilter>("All");
+const statusFilter = ref<StatusFilter>("All");
 
 const setSearchQuery = (value: string) => {
   searchQuery.value = value;
 };
 
-const filteredItems = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase();
-  if (!query) return props.items;
+const setPriorityFilter = (value: PriorityFilter) => {
+  priorityFilter.value = value;
+};
 
-  return props.items.filter((item) => {
+const setStatusFilter = (value: StatusFilter) => {
+  statusFilter.value = value;
+};
+
+const clearFilters = () => {
+  searchQuery.value = "";
+  priorityFilter.value = "All";
+  statusFilter.value = "All";
+};
+
+const filteredItems = computed(() => {
+  let list = props.items;
+
+  if (priorityFilter.value !== "All") {
+    list = list.filter((item) => item.priority === priorityFilter.value);
+  }
+  if (statusFilter.value !== "All") {
+    list = list.filter((item) => item.status === statusFilter.value);
+  }
+
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) return list;
+
+  return list.filter((item) => {
     const name = (props.employeesById[item.employeeId]?.name ?? "").toLowerCase();
     const matchesEmployee = name.includes(query);
     const matchesSuggestion = item.description.toLowerCase().includes(query);
@@ -32,7 +60,15 @@ const filteredItems = computed(() => {
   <section
     class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
   >
-    <SuggestionTableHeader :query="searchQuery" @update:query="setSearchQuery" />
+    <SuggestionTableHeader
+      :query="searchQuery"
+      :priority-filter="priorityFilter"
+      :status-filter="statusFilter"
+      @update:query="setSearchQuery"
+      @update:priority-filter="setPriorityFilter"
+      @update:status-filter="setStatusFilter"
+      @clear="clearFilters"
+    />
     <div class="overflow-x-auto">
       <table class="min-w-full border-collapse">
         <thead class="bg-slate-50 text-left">
@@ -100,7 +136,7 @@ const filteredItems = computed(() => {
           </tr>
           <tr v-if="filteredItems.length === 0" class="border-t border-slate-100">
             <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
-              No results match your search
+              No results match your filters or search
             </td>
           </tr>
         </tbody>
