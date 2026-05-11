@@ -70,10 +70,10 @@ npm test
 
 - Primary user is an HR / H&S (or similar) admin doing recurring triage on MSK suggestions.
 - Goal is reducing MSK absence risk through follow-up, not full CRUD on suggestion content.
-- This iteration is **view + triage only**: filters, search, and status updates — no create / edit / delete of suggestions.
-- Status values in code are `pending`, `in_progress`, `completed`, `overdue`; transitions match server + UI rules.
-- **`source`** (`vida` | `admin`) = who raised the recommendation; **`statusUpdatedBy`** reflects admin-driven status changes when applicable.
-- Data is **seeded sample + in-memory**; restarting the server resets to seed (unless the seed file itself changes).
+- This iteration is **view + triage only**: priority / status / type filters, text search, and status updates — no create / edit / delete of suggestions.
+- Status values in code are `pending`, `in_progress`, `completed`, `overdue`; transitions match server + UI rules (see `app/utils/domain/suggestionStatus.ts`). **`overdue`** is not auto-applied by background jobs in this demo.
+- **`source`** (`vida` | `admin`) = who raised the recommendation; **`statusUpdatedBy`** = who last changed workflow status; dashboard PATCH sets **`admin`**. **`completed`** rows are read-only for status in the UI.
+- Data is **seeded sample + in-memory**; restarting the **Nitro** server process resets to seed (unless the seed file itself changes).
 - **No authentication or roles** — anyone with access to the app can use triage actions shown in the UI.
 
 ---
