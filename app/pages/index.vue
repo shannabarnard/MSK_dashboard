@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
         MSK Suggestions Board
       </h1>
       <p class="mt-1 text-sm text-slate-600">
-        Triage suggestions and update their current status.
+        Triage employee suggestions and update their current status.
       </p>
     </header>
 
