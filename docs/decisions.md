@@ -135,3 +135,21 @@
 
 - Readers look in two places for “how the table filters”; the pipeline is documented in README and encoded in `filterSuggestionsByTableState`.
 - **`useDebouncedString` is a small in-house helper** instead of pulling in **VueUse** (`watchDebounced`, `useDebounceFn`, etc.): fewer dependencies and explicit behavior (e.g. flush when the query is whitespace-only). If the app grows more debounced or async UI patterns, **consider adopting VueUse** (or similar) for consistency and shared maintenance rather than accumulating one-off timers.
+
+---
+
+## 9) Narrow screens: hide Status column and status filter
+
+**Decision**
+
+- Below the **`sm` (640px)** breakpoint, the table **Status** column (`StatusChip`) and the header **status** facet filter (`<select>` in `SuggestionTableHeader.vue`) are **hidden** (`hidden` / `sm:table-cell` and `hidden` / `sm:block` respectively).
+- **Filtering by status** still works in state and in `filterSuggestionsByFacets` when set from a wider viewport; on small screens alone, users rely on other facets and search. **Clear** still resets status to **All**.
+- The **Update** column **`StatusSelect`** still lists the current value and allowed transitions, so **workflow status remains visible and editable** without the dedicated Status column or filter.
+
+**Why**
+
+- On narrow layouts, horizontal space is scarce; the Status column and duplicate status control are **non-critical** for triage because the same information appears in the update dropdown.
+
+**Tradeoff**
+
+- Users on small screens cannot filter the list by status unless they use a wider viewport first. Status is still apparent per row via the update control.

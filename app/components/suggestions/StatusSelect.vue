@@ -39,7 +39,7 @@ const onChange = (event: Event) => {
   <label class="sr-only" :for="selectId">Update status</label>
   <select
     :id="selectId"
-    class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+    class="min-h-9 touch-manipulation rounded-md border border-slate-300 bg-white px-1 py-2 text-xs font-medium leading-tight text-slate-700 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:bg-slate-100 sm:w-full sm:min-h-8 sm:px-2 sm:py-0.5 sm:text-sm"
     :value="model"
     :disabled
     @change="onChange"

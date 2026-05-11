@@ -90,7 +90,7 @@ const onClear = () => {
     <select
       id="suggestion-filter-status"
       :value="props.statusFilter"
-      class="min-w-[9rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      class="hidden min-w-[9rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 sm:block"
       @change="onStatusChange"
     >
       <option value="All">All statuses</option>

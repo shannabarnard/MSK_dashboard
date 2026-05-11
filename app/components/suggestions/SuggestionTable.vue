@@ -99,12 +99,12 @@ const isStatusCompleted = (status: SuggestionStatus) => status === "completed";
               Priority
             </th>
             <th
-              class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500"
+              class="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:table-cell"
             >
               Status
             </th>
             <th
-              class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500"
+              class="min-w-[10rem] px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 align-middle sm:min-w-[11rem] sm:px-4"
             >
               Update
             </th>
@@ -137,12 +137,14 @@ const isStatusCompleted = (status: SuggestionStatus) => status === "completed";
             <td class="px-4 py-3">
               <RiskBadge :priority="item.priority" />
             </td>
-            <td class="px-4 py-3">
+            <td class="hidden px-4 py-3 sm:table-cell">
               <StatusChip :status="item.status" />
             </td>
-            <td class="px-4 py-3 align-top">
+            <td
+              class="min-w-[10rem] max-w-[12rem] px-3 py-3 align-middle sm:min-w-[11rem] sm:max-w-none sm:px-4"
+            >
               <template v-if="isStatusCompleted(item.status)">
-                <div class="min-w-0 pt-0.5">
+                <div class="min-w-0">
                   <p class="text-sm font-semibold text-slate-900">Completed</p>
                   <p class="mt-0.5 text-xs text-slate-500">
                     No further status changes
@@ -150,9 +152,7 @@ const isStatusCompleted = (status: SuggestionStatus) => status === "completed";
                 </div>
               </template>
               <template v-else>
-                <div
-                  class="[&_select]:min-h-[2.25rem] [&_select]:w-full [&_select]:text-sm"
-                >
+                <div class="flex w-full min-w-0 items-center">
                   <StatusSelect
                     :current-status="item.status"
                     :disabled="Boolean(pendingById[item.id])"
@@ -177,8 +177,14 @@ const isStatusCompleted = (status: SuggestionStatus) => status === "completed";
             class="border-t border-slate-100"
           >
             <td
+              colspan="4"
+              class="px-4 py-8 text-center text-sm text-slate-500 sm:hidden"
+            >
+              No results match your filters or search
+            </td>
+            <td
               colspan="5"
-              class="px-4 py-8 text-center text-sm text-slate-500"
+              class="hidden px-4 py-8 text-center text-sm text-slate-500 sm:table-cell"
             >
               No results match your filters or search
             </td>
