@@ -61,61 +61,53 @@ const onClear = () => {
   <div
     class="flex flex-wrap items-end gap-4 border-b border-slate-200 bg-slate-50 px-4 py-3"
   >
-    <div class="flex min-w-[12rem] flex-1 flex-col gap-1">
-      <input
-        id="suggestion-search-input"
-        :value="props.query"
-        type="search"
-        placeholder="Search by employee name or suggestion"
-        class="w-full max-w-md rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
-        @input="onQueryInput"
-      />
-    </div>
+    <input
+      id="suggestion-search-input"
+      :value="props.query"
+      type="search"
+      placeholder="Search by employee name or suggestion"
+      class="min-w-[12rem] w-full max-w-md flex-1 rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      @input="onQueryInput"
+    />
 
     <SuggestionTypeTagGroup
       :model-value="props.selectedTypes"
       @update:model-value="setSelectedTypes"
     />
 
-    <div class="flex flex-col gap-1">
-      <select
-        id="suggestion-filter-priority"
-        :value="props.priorityFilter"
-        class="min-w-[9rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
-        @change="onPriorityChange"
-      >
-        <option value="All">All priorities</option>
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
-      </select>
-    </div>
+    <select
+      id="suggestion-filter-priority"
+      :value="props.priorityFilter"
+      class="min-w-[9rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      @change="onPriorityChange"
+    >
+      <option value="All">All priorities</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
 
-    <div class="flex flex-col gap-1">
-      <select
-        id="suggestion-filter-status"
-        :value="props.statusFilter"
-        class="min-w-[9rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
-        @change="onStatusChange"
-      >
-        <option value="All">All statuses</option>
-        <option value="pending">Pending</option>
-        <option value="in_progress">In progress</option>
-        <option value="overdue">Overdue</option>
-        <option value="completed">Completed</option>
-      </select>
-    </div>
+    <select
+      id="suggestion-filter-status"
+      :value="props.statusFilter"
+      class="min-w-[9rem] rounded-md border border-slate-300 px-2 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      @change="onStatusChange"
+    >
+      <option value="All">All statuses</option>
+      <option value="pending">Pending</option>
+      <option value="in_progress">In progress</option>
+      <option value="overdue">Overdue</option>
+      <option value="completed">Completed</option>
+    </select>
 
-    <div class="flex flex-col gap-1">
-      <button
-        id="suggestion-clear-filters"
-        type="button"
-        class="rounded-md border bg-slate-200 border-slate-300 px-2.5 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
-        :disabled="!hasActiveFilters"
-        @click="onClear"
-      >
-        Clear
-      </button>
-    </div>
+    <button
+      id="suggestion-clear-filters"
+      type="button"
+      class="rounded-md border border-slate-300 bg-slate-200 px-2.5 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50"
+      :disabled="!hasActiveFilters"
+      @click="onClear"
+    >
+      Clear
+    </button>
   </div>
 </template>

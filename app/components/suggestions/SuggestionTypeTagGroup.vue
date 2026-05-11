@@ -31,7 +31,7 @@ const onTypeChange = (type: SuggestionType, event: Event) => {
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-col gap-1">
+  <div class="min-w-0">
     <div
       role="group"
       :aria-labelledby="`${groupId}-label`"

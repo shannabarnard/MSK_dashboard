@@ -19,7 +19,7 @@ const badge = computed(() => PRIORITY_BADGE[props.priority]);
 
 <template>
   <span
-    class="inline-flex items-center gap-x-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset text-gray-700 ring-gray-600/10"
+    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/10"
   >
     <span
       class="h-1.5 w-1.5 shrink-0 rounded-full"

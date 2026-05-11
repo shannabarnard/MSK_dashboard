@@ -142,15 +142,11 @@ const isStatusCompleted = (status: SuggestionStatus) => status === "completed";
             </td>
             <td class="px-4 py-3 align-top">
               <template v-if="isStatusCompleted(item.status)">
-                <div class="flex gap-2.5">
-                  <div class="min-w-0 pt-0.5">
-                    <p class="text-sm font-semibold text-slate-900">
-                      Completed
-                    </p>
-                    <p class="mt-0.5 text-xs text-slate-500">
-                      No further status changes
-                    </p>
-                  </div>
+                <div class="min-w-0 pt-0.5">
+                  <p class="text-sm font-semibold text-slate-900">Completed</p>
+                  <p class="mt-0.5 text-xs text-slate-500">
+                    No further status changes
+                  </p>
                 </div>
               </template>
               <template v-else>
